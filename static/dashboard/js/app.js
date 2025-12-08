@@ -126,18 +126,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Change button appearance to show admin mode
     adminLoginBtn.classList.add('teal');
-    adminLoginBtn.innerHTML = '<i class="shield alternate icon"></i> Admin Mode';
+    adminLoginBtn.innerHTML = '<i class="shield alternate icon"></i> Modo de Administrador';
     $('#loginToken').val('').focus();
     
     // Show admin-specific instructions
     $('.ui.info.message').html(`
         <div class="header mb-4">
             <i class="user shield icon"></i>
-            Admin Login
+            Login de Administrador
         </div>
-        <p>Please enter your admin credentials:</p>
+        <p>Por favor, insira suas credenciais de administrador:</p>
         <ul>
-            <li>Use your admin token in the field above</li>
+            <li>Use seu token de administrador no campo acima</li>
         </ul>
     `);
     
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const token = loginTokenInput.value.trim();
     
     if (!token) {
-        showError('Please enter your access token');
+        showError('Por favor, insira seu token de acesso');
         $('#loginToken').focus();
         return;
     }
@@ -194,15 +194,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('pairHelp').classList.add('hidden');;
                 // Success case
                 if (data.success && data.data && data.data.LinkingCode) {
-                  document.getElementById('pairInfo').innerHTML = `Your link code is: ${data.data.LinkingCode}`;
+                  document.getElementById('pairInfo').innerHTML = `Seu código de ligação é: ${data.data.LinkingCode}`;
                   scanInterval = setInterval(checkStatus, 1000);
                 } else {
-                  document.getElementById('pairInfo').innerHTML = "Problem getting pairing code";
+                  document.getElementById('pairInfo').innerHTML = "Problema ao obter código de pareamento";
                 }
               })
               .catch((error) => {
                 // Error case
-                document.getElementById('pairInfo').innerHTML = "Problem getting pairing code";
+                document.getElementById('pairInfo').innerHTML = "Problema ao obter código de pareamento";
                 console.error('Pairing error:', error);
               });
           }
@@ -248,9 +248,9 @@ document.addEventListener('DOMContentLoaded', function() {
       sendTextMessage().then((result)=>{
         document.getElementById("sendMessageContainer").classList.remove('hidden');
         if(result.success===true) {
-           document.getElementById('sendMessageContainer').innerHTML=`Message sent successfully. Id: ${result.data.Id}`
+           document.getElementById('sendMessageContainer').innerHTML=`Mensagem enviada com sucesso. Id: ${result.data.Id}`
         } else {
-           document.getElementById('sendMessageContainer').innerHTML=`Problem sending message: ${result.error}`
+           document.getElementById('sendMessageContainer').innerHTML=`Problema ao enviar mensagem: ${result.error}`
         }
       });
       return false;
@@ -265,9 +265,9 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(result);
         document.getElementById("deleteMessageContainer").classList.remove('hidden');
         if(result.success===true) {
-           document.getElementById('deleteMessageContainer').innerHTML=`Message deleted successfully.`
+           document.getElementById('deleteMessageContainer').innerHTML=`Mensagem excluída com sucesso.`
         } else {
-           document.getElementById('deleteMessageContainer').innerHTML=`Problem deleting message: ${result.error}`
+           document.getElementById('deleteMessageContainer').innerHTML=`Problema ao excluir mensagem: ${result.error}`
         }
       });
       return false;
@@ -387,21 +387,21 @@ document.addEventListener('DOMContentLoaded', function() {
         identifier: 'name',
         rules: [{
           type: 'empty',
-          prompt: 'Please enter a name for the instance'
+          prompt: 'Por favor, insira um nome para a instância'
         }]
       },
       token: {
         identifier: 'token',
         rules: [{
           type: 'empty',
-          prompt: 'Please enter an authentication token for the instance'
+          prompt: 'Por favor, insira um token de autenticação para a instância'
         }]
       },
       events: {
         identifier: 'events',
         rules: [{
           type: 'empty',
-          prompt: 'Please select at least one event'
+          prompt: 'Por favor, selecione pelo menos um evento'
         }]
       },
       history: {
@@ -409,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function() {
         optional: true,
         rules: [{
           type: 'integer[0..]',
-          prompt: 'History must be a non-negative integer'
+          prompt: 'Histórico deve ser um número inteiro não negativo'
         }]
       },
       proxy_url: {
@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', function() {
         optional: true,
         rules: [{
           type: 'regExp[^(https?|socks5)://.*]',
-          prompt: 'Proxy URL must start with http://, https://, or socks5://'
+          prompt: 'URL do proxy deve começar com http://, https://, ou socks5://'
         }]
       },
       s3_endpoint: {
@@ -425,7 +425,7 @@ document.addEventListener('DOMContentLoaded', function() {
         optional: true,
         rules: [{
           type: 'url',
-          prompt: 'Please enter a valid S3 endpoint URL'
+          prompt: 'Por favor, insira uma URL de endpoint S3 válida'
         }]
       },
       s3_bucket: {
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function() {
         optional: true,
         rules: [{
           type: 'regExp[^[a-z0-9][a-z0-9.-]*[a-z0-9]$]',
-          prompt: 'Please enter a valid S3 bucket name'
+          prompt: 'Por favor, insira um nome de bucket S3 válido'
         }]
       }
     },
@@ -446,45 +446,45 @@ document.addEventListener('DOMContentLoaded', function() {
       const hmacEnabled = fields.hmac_enabled === 'on' || fields.hmac_enabled === true;
 
       if (proxyEnabled && !fields.proxy_url) {
-        showError('Proxy URL is required when proxy is enabled');
+        showError('A URL do proxy é obrigatória quando o proxy está habilitado');
         return false;
       }
 
       if (s3Enabled) {
         if (!fields.s3_bucket) {
-          showError('S3 bucket name is required when S3 is enabled');
+          showError('O nome do bucket S3 é obrigatório quando o S3 está habilitado');
           return false;
         }
         if (!fields.s3_access_key) {
-          showError('S3 access key is required when S3 is enabled');
+          showError('A chave de acesso S3 é obrigatória quando o S3 está habilitado');
           return false;
         }
         if (!fields.s3_secret_key) {
-          showError('S3 secret key is required when S3 is enabled');
+          showError('A chave secreta S3 é obrigatória quando o S3 está habilitado');
           return false;
         }
       }
 
       if (hmacEnabled && !fields.hmac_key) {
-        showError('HMAC key is required when HMAC is enabled');
+        showError('A chave HMAC é obrigatória quando o HMAC está habilitado');
         return false;
       }
 
       if (hmacEnabled && fields.hmac_key && fields.hmac_key.length < 32) {
-        showError('HMAC key must be at least 32 characters long');
+        showError('A chave HMAC deve ter pelo menos 32 caracteres');
         return false;
       }
 
       addInstance(fields).then((result) => {
         if (result.success) {
-          showSuccess('Instance created successfully');
+          showSuccess('Instância criada com sucesso');
           // Refresh the instances list
           updateAdmin();
         } else {
-          showError('Failed to create instance: ' + (result.error || 'Unknown error'));
+          showError('Falha ao criar instância: ' + (result.error || 'Erro desconhecido'));
         }
       }).catch((error) => {
-        showError('Error creating instance: ' + error.message);
+        showError('Erro ao criar instância: ' + error.message);
       });
 
       $('#addInstanceModal').modal('hide');
@@ -572,9 +572,9 @@ function webhookModal() {
       $('#modalSetWebhook').modal({onApprove: function() {
         setWebhook().then((result)=>{
           if(result.success===true) {
-             $.toast({ class: 'success', message: `Webhook set successfully !`});
+             $.toast({ class: 'success', message: `Webhook configurado com sucesso !`});
           } else {
-             $.toast({ class: 'error', message: `Problem setting webhook: ${result.error}`});
+             $.toast({ class: 'error', message: `Problema ao configurar webhook: ${result.error}`});
           }
         });
         return true;
@@ -601,7 +601,7 @@ function modalPairPhone() {
 }
 
 function handleRegularLogin(token,notifications=false) {
-  console.log('Regular login with token:', token);
+  console.log('Login regular com token:', token);
   setLocalStorageItem('token', token, 6);
   removeLocalStorageItem('isAdmin');
   $('.adminlogin').hide();
@@ -625,7 +625,7 @@ function handleRegularLogin(token,notifications=false) {
       updateUser();
     } else {
       removeLocalStorageItem('token');
-      showError("Invalid credentials");
+      showError("Credenciais inválidas");
       $('#loginToken').focus();
     }
   });
@@ -698,7 +698,7 @@ function handleAdminLogin(token,notifications=false) {
       removeLocalStorageItem('admintoken');
       removeLocalStorageItem('token');
       removeLocalStorageItem('isAdmin');
-      showError("Admin login failed");
+      showError("Falha no login de administrador");
       $('#loginToken').focus();
     }
   });
@@ -748,14 +748,14 @@ async function performDelete(id) {
     $('#instance-row-' + id).remove();
     showDeleteSuccess();
   } else {
-    showError('Error deleting instance');
+    showError('Erro ao excluir instância');
   }
 }
 
 function showDeleteSuccess() {
   $('body').toast({
     class: 'success',
-    message: 'Instance deleted successfully',
+    message: 'Instância excluída com sucesso',
     position: 'top right',
     showProgress: 'bottom'
   });
@@ -851,10 +851,10 @@ function doUserAvatar() {
         const userAvatarDiv = document.getElementById('userAvatarContainer');
         userAvatarDiv.innerHTML=`<img src="${data.data.url}" alt="Profile Picture" class="user-avatar">`;
       } else {
-          document.getElementById('userAvatarContainer').innerHTML = 'No user avatar found';
+          document.getElementById('userAvatarContainer').innerHTML = 'Nenhum avatar de usuário encontrado';
       }
     }).catch(error => {
-      document.getElementById('userAvatarContainer').innerHTML = 'Error fetching user avatar';
+      document.getElementById('userAvatarContainer').innerHTML = 'Erro ao buscar avatar do usuário';
       console.error('Error:', error);
     });
   }
@@ -887,10 +887,10 @@ function doUserInfo() {
               userInfoDiv.appendChild(userElement);
           }
       } else {
-          document.getElementById('userInfoContainer').innerHTML = 'No user data found';
+          document.getElementById('userInfoContainer').innerHTML = 'Nenhum dado de usuário encontrado';
       }
     }).catch(error => {
-      document.getElementById('userInfoContainer').innerHTML = 'Error fetching user info';
+      document.getElementById('userInfoContainer').innerHTML = 'Erro ao buscar informações do usuário';
       console.error('Error:', error);
     });
   }
@@ -1192,14 +1192,14 @@ function populateInstances(instances) {
       <tr>
         <td>${instance.id}</td>
         <td>${instance.name}</td>
-        <td><i class="${instance.connected ? 'check green' : 'times red'} icon"></i> <span class="status ${instance.connected}">${instance.connected ? 'Yes' : 'No'}</span></td>
-        <td><i class="${instance.loggedIn ? 'check green' : 'times red'} icon"></i> <span class="status ${instance.loggedIn}">${instance.loggedIn ? 'Yes' : 'No'}</span></td>
+        <td><i class="${instance.connected ? 'check green' : 'times red'} icon"></i> <span class="status ${instance.connected}">${instance.connected ? 'Sim' : 'Não'}</span></td>
+        <td><i class="${instance.loggedIn ? 'check green' : 'times red'} icon"></i> <span class="status ${instance.loggedIn}">${instance.loggedIn ? 'Sim' : 'Não'}</span></td>
         <td>
           <button class="ui primary button dashboard-button" onclick="openDashboard('${instance.id}', '${instance.token}')">
-            <i class="external alternate icon"></i> Open
+            <i class="external alternate icon"></i> Abrir
           </button>
           <button class="ui negative button dashboard-button" onclick="deleteInstance('${instance.id}')">
-            <i class="trash alternate icon"></i> Delete
+            <i class="trash alternate icon"></i> Excluir
           </button>
         </td>
       </tr>
@@ -1217,16 +1217,16 @@ function populateInstances(instances) {
                           <div class="ui labels" style="margin-top: 0.5em;">
                               <div class="ui ${instance.connected ? 'green' : 'red'} horizontal label">
                                   <i class="${instance.connected ? 'check' : 'times'} icon"></i>
-                                  ${instance.connected ? 'Connected' : 'Disconnected'}
+                                  ${instance.connected ? 'Conectado' : 'Desconectado'}
                               </div>
                               <div class="ui ${instance.loggedIn ? 'green' : 'red'} horizontal label">
                                   <i class="${instance.loggedIn ? 'check' : 'times'} icon"></i>
-                                  ${instance.loggedIn ? 'Logged In' : 'Logged Out'}
+                                  ${instance.loggedIn ? 'Logado' : 'Deslogado'}
                               </div>
                           </div>
                       </div>
                       
-                      <div class="meta" style="margin-bottom: 1rem;">Instance ID: ${instance.id}</div>
+                      <div class="meta" style="margin-bottom: 1rem;">ID da Instância: ${instance.id}</div>
                       
                       <div class="ui list">
                           <div class="item">
@@ -1235,39 +1235,39 @@ function populateInstances(instances) {
                           </div>
                           <div class="item">
                               <div class="header">JID</div>
-                              <div class="content">${instance.jid || 'Not available'}</div>
+                              <div class="content">${instance.jid || 'Não disponível'}</div>
                           </div>
                           <div class="item">
                               <div class="header">Webhook</div>
-                              <div class="content" style="word-break: break-all;">${instance.webhook || 'Not configured'}</div>
+                              <div class="content" style="word-break: break-all;">${instance.webhook || 'Não configurado'}</div>
                           </div>
                           <div class="item">
                               <div class="header">HMAC</div>
-                              <div class="content">${instance.hmac_configured ? 'Configured' : 'Not configured'}</div>
+                              <div class="content">${instance.hmac_configured ? 'Configurado' : 'Não configurado'}</div>
                           </div>
                           <div class="item">
-                              <div class="header">Subscribed Events</div>
-                              <div class="content">${instance.events || 'Not configured'}</div>
+                              <div class="header">Eventos Inscritos</div>
+                              <div class="content">${instance.events || 'Não configurado'}</div>
                           </div>
                           <div class="item">
-                              <div class="header">Message History</div>
-                              <div class="content">${instance.history || 0} messages per chat</div>
+                              <div class="header">Histórico de Mensagens</div>
+                              <div class="content">${instance.history || 0} mensagens por chat</div>
                           </div>
                           <div class="item">
                               <div class="header">Proxy</div>
-                              <div class="content">${instance.proxy_config.enabled ? 'Enabled' : 'Disabled'}</div>
+                              <div class="content">${instance.proxy_config.enabled ? 'Habilitado' : 'Desabilitado'}</div>
                           </div>
                           <div class="item">
-                              <div class="header">Proxy URL</div>
-                              <div class="content">${instance.proxy_config.proxy_url || 'Not configured'}</div>
+                              <div class="header">URL do Proxy</div>
+                              <div class="content">${instance.proxy_config.proxy_url || 'Não configurado'}</div>
                           </div>
                           <div class="item">
                               <div class="header">S3</div>
-                              <div class="content">${instance.s3_config.enabled ? 'Enabled' : 'Disabled'}</div>
+                              <div class="content">${instance.s3_config.enabled ? 'Habilitado' : 'Desabilitado'}</div>
                           </div>
                           <div class="item">
-                              <div class="header">S3 Endpoint</div>
-                              <div class="content">${instance.s3_config.endpoint || 'Not configured'}</div>
+                              <div class="header">Endpoint S3</div>
+                              <div class="content">${instance.s3_config.endpoint || 'Não configurado'}</div>
                           </div>
                       </div>
                   </div>
@@ -1280,11 +1280,11 @@ function populateInstances(instances) {
                           `<img src="${instance.qrcode}" style="max-height: 100%; max-width: 100%;">
                       </div>
                       <div>
-                        Open WhatsApp on your phone and tap<br/><i class="ellipsis vertical icon"></i>> Linked devices > Link a device.
+                        Abra o WhatsApp no seu celular e toque em<br/><i class="ellipsis vertical icon"></i>> Aparelhos conectados > Conectar um aparelho.
                           ` : 
                                 `<div class="ui icon header" style="text-align: center;">
                                     <i class="qrcode icon" style="font-size: 3em;"></i>
-                                    <div class="sub header">QR Code will appear here</div>
+                                    <div class="sub header">QR Code aparecerá aqui</div>
                                 </div>`
                            }
                       </div>
@@ -1296,9 +1296,9 @@ function populateInstances(instances) {
             </div>
             
             <div class="extra content">
-              <button class="ui primary positive button dashboard-button ${instance.connected === true ? 'hidden' : ''}" id="button-connect-${instance.id}" onclick="connect('${instance.token}')">Connect</button>
-              <button class="ui primary negative button dashboard-button ${instance.connected === true ? '' : 'hidden'}" id="button-logout-${instance.id}" onclick="logout('${instance.token}')">Logout</button>
-              <button class="ui primary positive button dashboard-button ${instance.connected === true && instance.loggedIn === false ? '' : 'hidden'} id="button-logout-${instance.id}" onclick="modalPairPhone()">Login with Pairing Code</button>
+              <button class="ui primary positive button dashboard-button ${instance.connected === true ? 'hidden' : ''}" id="button-connect-${instance.id}" onclick="connect('${instance.token}')">Conectar</button>
+              <button class="ui primary negative button dashboard-button ${instance.connected === true ? '' : 'hidden'}" id="button-logout-${instance.id}" onclick="logout('${instance.token}')">Sair</button>
+              <button class="ui primary positive button dashboard-button ${instance.connected === true && instance.loggedIn === false ? '' : 'hidden'} id="button-logout-${instance.id}" onclick="modalPairPhone()">Login com Código de Pareamento</button>
               </div>
         </div>
         `;
@@ -1383,7 +1383,7 @@ function showAdminUser() {
   indicator.className = 'item admin';
   indicator.innerHTML = `
     <i class="user shield icon"></i>
-    <div class="ui mini label">ADMIN</div>
+    <div class="ui mini label">ADMINISTRADOR</div>
   `;
 }
   
@@ -1394,7 +1394,7 @@ function showRegularUser() {
   indicator.className = 'item user';
   indicator.innerHTML = `
     <i class="user icon"></i>
-    <div class="ui mini label">USER</div>
+    <div class="ui mini label">USUÁRIO</div>
   `;
 }
 
@@ -1513,15 +1513,15 @@ async function saveS3Config() {
     
     const data = await res.json();
     if (data.success) {
-      showSuccess('S3 configuration saved successfully');
+      showSuccess('Configuração S3 salva com sucesso');
       // Show delete button since we now have a configuration
       $('#deleteS3Config').show();
       $('#modalS3Config').modal('hide');
     } else {
-      showError('Failed to save S3 configuration: ' + (data.error || 'Unknown error'));
+      showError('Falha ao salvar configuração S3: ' + (data.error || 'Erro desconhecido'));
     }
   } catch (error) {
-    showError('Error saving S3 configuration');
+    showError('Erro ao salvar configuração S3');
     console.error('Error:', error);
   }
 }
@@ -1542,12 +1542,12 @@ async function testS3Connection() {
     
     const data = await res.json();
     if (data.success) {
-      showSuccess('S3 connection test successful!');
+      showSuccess('Teste de conexão S3 bem-sucedido!');
     } else {
-      showError('S3 connection test failed: ' + (data.error || 'Unknown error'));
+      showError('Teste de conexão S3 falhou: ' + (data.error || 'Erro desconhecido'));
     }
   } catch (error) {
-    showError('Error testing S3 connection');
+    showError('Erro ao testar conexão S3');
     console.error('Error:', error);
   } finally {
     $('#testS3Connection').removeClass('loading disabled');
@@ -1556,7 +1556,7 @@ async function testS3Connection() {
 
 async function deleteS3Config() {
   // Show confirmation dialog
-  if (!confirm('Are you sure you want to delete the S3 configuration? This action cannot be undone.')) {
+  if (!confirm('Tem certeza que deseja excluir a configuração S3? Esta ação não pode ser desfeita.')) {
     return;
   }
   
@@ -1575,7 +1575,7 @@ async function deleteS3Config() {
     
     const data = await res.json();
     if (data.success) {
-      showSuccess('S3 configuration deleted successfully');
+      showSuccess('Configuração S3 excluída com sucesso');
       
       // Clear all form fields
       $('#s3Endpoint').val('');
@@ -1593,10 +1593,10 @@ async function deleteS3Config() {
       
       $('#modalS3Config').modal('hide');
     } else {
-      showError('Failed to delete S3 configuration: ' + (data.error || 'Unknown error'));
+      showError('Falha ao excluir configuração S3: ' + (data.error || 'Erro desconhecido'));
     }
   } catch (error) {
-    showError('Error deleting S3 configuration');
+    showError('Erro ao excluir configuração S3');
     console.error('Error:', error);
   } finally {
     $('#deleteS3Config').removeClass('loading disabled');
@@ -1652,13 +1652,13 @@ async function saveHistoryConfig() {
     
     const data = await res.json();
     if (data.success) {
-      showSuccess('History configuration saved successfully');
+      showSuccess('Configuração de histórico salva com sucesso');
       $('#modalHistoryConfig').modal('hide');
     } else {
-      showError('Failed to save history configuration: ' + (data.error || 'Unknown error'));
+      showError('Falha ao salvar configuração de histórico: ' + (data.error || 'Erro desconhecido'));
     }
   } catch (error) {
-    showError('Error saving history configuration');
+    showError('Erro ao salvar configuração de histórico');
     console.error('Error:', error);
   }
 }
@@ -1734,13 +1734,13 @@ async function saveProxyConfig() {
       
       const data = await res.json();
       if (data.success) {
-        showSuccess('Proxy disabled successfully');
+        showSuccess('Proxy desabilitado com sucesso');
         $('#modalProxyConfig').modal('hide');
       } else {
-        showError('Failed to disable proxy: ' + (data.error || 'Unknown error'));
+        showError('Falha ao desabilitar proxy: ' + (data.error || 'Erro desconhecido'));
       }
     } catch (error) {
-      showError('Error disabling proxy');
+      showError('Erro ao desabilitar proxy');
       console.error('Error:', error);
     }
     return;
@@ -1748,13 +1748,13 @@ async function saveProxyConfig() {
   
   // If enabled, validate proxy URL
   if (!proxyUrl) {
-    showError('Proxy URL is required when proxy is enabled');
+    showError('A URL do proxy é obrigatória quando o proxy está habilitado');
     return;
   }
   
   // Validate proxy URL has correct protocol
   if (!proxyUrl.startsWith('http://') && !proxyUrl.startsWith('https://') && !proxyUrl.startsWith('socks5://')) {
-    showError('Proxy URL must start with http://, https://, or socks5://');
+    showError('A URL do proxy deve começar com http://, https://, ou socks5://');
     return;
   }
   
@@ -1772,13 +1772,13 @@ async function saveProxyConfig() {
     
     const data = await res.json();
     if (data.success) {
-      showSuccess('Proxy configuration saved successfully');
+      showSuccess('Configuração de proxy salva com sucesso');
       $('#modalProxyConfig').modal('hide');
     } else {
-      showError('Failed to save proxy configuration: ' + (data.error || 'Unknown error'));
+      showError('Falha ao salvar configuração de proxy: ' + (data.error || 'Erro desconhecido'));
     }
   } catch (error) {
-    showError('Error saving proxy configuration');
+    showError('Erro ao salvar configuração de proxy');
     console.error('Error:', error);
   }
 }
@@ -1826,12 +1826,12 @@ async function saveHmacConfig() {
   const hmacKey = $('#hmacKey').val().trim();
   
   if (!hmacKey) {
-    showError('HMAC key is required');
+    showError('A chave HMAC é obrigatória');
     return;
   }
   
   if (hmacKey.length < 32) {
-    showError('HMAC key must be at least 32 characters long');
+    showError('A chave HMAC deve ter pelo menos 32 caracteres');
     return;
   }
   
@@ -1849,21 +1849,21 @@ async function saveHmacConfig() {
     const response = await res.json();
     
     if (res.ok && response.Details) {
-      showSuccess('HMAC configuration saved successfully');
+      showSuccess('Configuração HMAC salva com sucesso');
       $('#deleteHmacConfig').show();
       $('#modalHmacConfig').modal('hide');
     } else {
-      showError('Failed to save HMAC configuration: ' + (response.error || 'Unknown error'));
+      showError('Falha ao salvar configuração HMAC: ' + (response.error || 'Erro desconhecido'));
     }
   } catch (error) {
-    showError('Error saving HMAC configuration');
+    showError('Erro ao salvar configuração HMAC');
     console.error('Error:', error);
   }
 }
 
 async function deleteHmacConfig() {
   // Show confirmation dialog
-  if (!confirm('Are you sure you want to delete the HMAC configuration? This action cannot be undone.')) {
+  if (!confirm('Tem certeza que deseja excluir a configuração HMAC? Esta ação não pode ser desfeita.')) {
     return;
   }
   
@@ -1884,7 +1884,7 @@ async function deleteHmacConfig() {
     
     // Nova verificação - estrutura direta sem "success"
     if (res.ok && response.Details) {
-      showSuccess('HMAC configuration deleted successfully');
+      showSuccess('Configuração HMAC excluída com sucesso');
       
       // Clear form field
       $('#hmacKey').val('');
@@ -1894,10 +1894,10 @@ async function deleteHmacConfig() {
       
       $('#modalHmacConfig').modal('hide');
     } else {
-      showError('Failed to delete HMAC configuration: ' + (response.error || 'Unknown error'));
+      showError('Falha ao excluir configuração HMAC: ' + (response.error || 'Erro desconhecido'));
     }
   } catch (error) {
-    showError('Error deleting HMAC configuration');
+    showError('Erro ao excluir configuração HMAC');
     console.error('Error:', error);
   } finally {
     $('#deleteHmacConfig').removeClass('loading disabled');

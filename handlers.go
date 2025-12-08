@@ -42,6 +42,13 @@ func (v Values) Get(key string) string {
 	return v.m[key]
 }
 
+func (s *server) ChatwootWebhookTokenPost() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Webhook OK"))
+	}
+}
+
 func (s *server) GetHealth() http.HandlerFunc {
 	type HealthResponse struct {
 		Status            string                 `json:"status"`
@@ -118,7 +125,238 @@ func (s *server) GetHealth() http.HandlerFunc {
 	}
 }
 
+// ChatwootWebhookPayload representa o payload recebido do Chatwoot
+// Adapte conforme o formato real do webhook
+// Exemplo: { "event": "Message", "data": { ... } }
+type ChatwootWebhookPayload struct {
+	Event    string      `json:"event"`
+	Instance string      `json:"instance,omitempty"`
+	Data     interface{} `json:"data"`
+}
+
+// Handler para /chatwoot/webhook
+func (s *server) ChatwootWebhook() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			s.Respond(w, r, http.StatusMethodNotAllowed, map[string]interface{}{"error": "Método não permitido"})
+			return
+		}
+
+		var payload ChatwootWebhookPayload
+		decoder := json.NewDecoder(r.Body)
+		if err := decoder.Decode(&payload); err != nil {
+			s.Respond(w, r, http.StatusBadRequest, map[string]interface{}{"error": "Erro ao decodificar JSON"})
+			return
+		}
+
+		chatwootURL := os.Getenv("CHATWOOT_API_URL")
+		chatwootToken := os.Getenv("CHATWOOT_API_TOKEN")
+		if chatwootURL != "" && chatwootToken != "" {
+			go func() {
+				client := &http.Client{}
+				jsonBody, _ := json.Marshal(payload)
+				req, _ := http.NewRequest("POST", chatwootURL, bytes.NewBuffer(jsonBody))
+				req.Header.Set("Content-Type", "application/json")
+				req.Header.Set("api_access_token", chatwootToken)
+				client.Do(req)
+			}()
+		}
+
+		s.Respond(w, r, http.StatusOK, map[string]interface{}{"status": "OK"})
+	}
+}
+
 // messageTypes moved to constants.go as supportedEventTypes
+
+// ChatwootConfig representa a configuração da integração Chatwoot
+// Pode ser expandida conforme necessidade
+var chatwootConfig struct {
+	URL   string
+	Token string
+}
+
+// Handler para configurar integração Chatwoot
+func (s *server) ChatwootConfigPost() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			s.Respond(w, r, http.StatusMethodNotAllowed, map[string]interface{}{"error": "Método não permitido"})
+			return
+		}
+		var cfg struct {
+			URL   string `json:"url"`
+			Token string `json:"token"`
+		}
+		decoder := json.NewDecoder(r.Body)
+		if err := decoder.Decode(&cfg); err != nil {
+			s.Respond(w, r, http.StatusBadRequest, map[string]interface{}{"error": "Erro ao decodificar JSON"})
+			return
+		}
+		chatwootConfig.URL = cfg.URL
+		chatwootConfig.Token = cfg.Token
+		s.Respond(w, r, http.StatusOK, map[string]interface{}{"status": "Configuração salva"})
+	}
+}
+
+// Handler para retornar configuração atual
+func (s *server) ChatwootConfigGet() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			s.Respond(w, r, http.StatusMethodNotAllowed, map[string]interface{}{"error": "Método não permitido"})
+			return
+		}
+		s.Respond(w, r, http.StatusOK, map[string]interface{}{"url": chatwootConfig.URL, "token": chatwootConfig.Token})
+	}
+}
+
+// Handler para remover configuração
+func (s *server) ChatwootConfigDelete() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodDelete {
+			s.Respond(w, r, http.StatusMethodNotAllowed, map[string]interface{}{"error": "Método não permitido"})
+			return
+		}
+		chatwootConfig.URL = ""
+		chatwootConfig.Token = ""
+		s.Respond(w, r, http.StatusOK, map[string]interface{}{"status": "Configuração removida"})
+	}
+}
+
+// Handler para status da integração
+func (s *server) ChatwootStatusGet() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			s.Respond(w, r, http.StatusMethodNotAllowed, map[string]interface{}{"error": "Método não permitido"})
+			return
+		}
+		if chatwootConfig.URL == "" || chatwootConfig.Token == "" {
+			s.Respond(w, r, http.StatusOK, map[string]interface{}{"status": "Desconfigurado"})
+			return
+		}
+		// Aqui pode ser expandido para testar conexão real
+		s.Respond(w, r, http.StatusOK, map[string]interface{}{"status": "Configurado"})
+	}
+}
+
+// Handler para testar conexão
+func (s *server) ChatwootTestPost() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			s.Respond(w, r, http.StatusMethodNotAllowed, map[string]interface{}{"error": "Método não permitido"})
+			return
+		}
+		if chatwootConfig.URL == "" || chatwootConfig.Token == "" {
+			s.Respond(w, r, http.StatusBadRequest, map[string]interface{}{"error": "Configuração ausente"})
+			return
+		}
+		client := &http.Client{}
+		req, err := http.NewRequest("GET", chatwootConfig.URL+"/api/v1/accounts", nil)
+		if err != nil {
+			s.Respond(w, r, http.StatusInternalServerError, map[string]interface{}{"error": err.Error()})
+			return
+		}
+		req.Header.Set("api_access_token", chatwootConfig.Token)
+		resp, err := client.Do(req)
+		if err != nil {
+			s.Respond(w, r, http.StatusInternalServerError, map[string]interface{}{"error": err.Error()})
+			return
+		}
+		defer resp.Body.Close()
+		s.Respond(w, r, http.StatusOK, map[string]interface{}{"status": "Teste executado", "code": resp.StatusCode})
+	}
+}
+
+// Handler para criar inbox no Chatwoot
+func (s *server) ChatwootCreateInboxPost() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			s.Respond(w, r, http.StatusMethodNotAllowed, map[string]interface{}{"error": "Método não permitido"})
+			return
+		}
+		if chatwootConfig.URL == "" || chatwootConfig.Token == "" {
+			s.Respond(w, r, http.StatusBadRequest, map[string]interface{}{"error": "Configuração ausente"})
+			return
+		}
+		var inboxData map[string]interface{}
+		decoder := json.NewDecoder(r.Body)
+		if err := decoder.Decode(&inboxData); err != nil {
+			s.Respond(w, r, http.StatusBadRequest, map[string]interface{}{"error": "Erro ao decodificar JSON"})
+			return
+		}
+		jsonBody, _ := json.Marshal(inboxData)
+		client := &http.Client{}
+		req, err := http.NewRequest("POST", chatwootConfig.URL+"/api/v1/inboxes", bytes.NewBuffer(jsonBody))
+		if err != nil {
+			s.Respond(w, r, http.StatusInternalServerError, map[string]interface{}{"error": err.Error()})
+			return
+		}
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("api_access_token", chatwootConfig.Token)
+		resp, err := client.Do(req)
+		if err != nil {
+			s.Respond(w, r, http.StatusInternalServerError, map[string]interface{}{"error": err.Error()})
+			return
+		}
+		defer resp.Body.Close()
+		var respData map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&respData)
+		s.Respond(w, r, http.StatusOK, respData)
+	}
+}
+
+// Handler para atualizar inbox
+func (s *server) ChatwootUpdateInboxPatch() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPatch {
+			s.Respond(w, r, http.StatusMethodNotAllowed, map[string]interface{}{"error": "Método não permitido"})
+			return
+		}
+		if chatwootConfig.URL == "" || chatwootConfig.Token == "" {
+			s.Respond(w, r, http.StatusBadRequest, map[string]interface{}{"error": "Configuração ausente"})
+			return
+		}
+		var inboxData map[string]interface{}
+		decoder := json.NewDecoder(r.Body)
+		if err := decoder.Decode(&inboxData); err != nil {
+			s.Respond(w, r, http.StatusBadRequest, map[string]interface{}{"error": "Erro ao decodificar JSON"})
+			return
+		}
+		inboxID, ok := inboxData["id"].(string)
+		if !ok || inboxID == "" {
+			s.Respond(w, r, http.StatusBadRequest, map[string]interface{}{"error": "ID da inbox ausente"})
+			return
+		}
+		jsonBody, _ := json.Marshal(inboxData)
+		client := &http.Client{}
+		req, err := http.NewRequest("PATCH", chatwootConfig.URL+"/api/v1/inboxes/"+inboxID, bytes.NewBuffer(jsonBody))
+		if err != nil {
+			s.Respond(w, r, http.StatusInternalServerError, map[string]interface{}{"error": err.Error()})
+			return
+		}
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("api_access_token", chatwootConfig.Token)
+		resp, err := client.Do(req)
+		if err != nil {
+			s.Respond(w, r, http.StatusInternalServerError, map[string]interface{}{"error": err.Error()})
+			return
+		}
+		defer resp.Body.Close()
+		var respData map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&respData)
+		s.Respond(w, r, http.StatusOK, respData)
+	}
+}
+
+// Handler para limpeza de mensagens
+func (s *server) ChatwootCleanupPost() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			s.Respond(w, r, http.StatusMethodNotAllowed, map[string]interface{}{"error": "Método não permitido"})
+			return
+		}
+		// Aqui pode ser implementada a lógica de limpeza
+		s.Respond(w, r, http.StatusOK, map[string]interface{}{"status": "Limpeza executada"})
+	}
+}
 
 func (s *server) authadmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

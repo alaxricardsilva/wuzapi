@@ -99,39 +99,39 @@ function initDemo() {
     
     const demoScenarios = {
         'message': [
-            { type: 'received', content: 'Hello! How can I help you?' },
-            { type: 'sent', content: 'I want to send a message to 5491155551234' },
-            { type: 'received', content: 'Ok! I will show you how to use the API to send a text message:' },
+            { type: 'received', content: 'Olá! Como posso ajudar você?' },
+            { type: 'sent', content: 'Quero enviar uma mensagem para 5511999999999' },
+            { type: 'received', content: 'Ok! Vou te mostrar como usar a API para enviar uma mensagem de texto:' },
             { type: 'code', content: `POST /chat/send/text
 {
-  "Phone": "5491155551234",
-  "Body": "Hello, this was sent via WuzAPI!"
+  "Phone": "5511999999999",
+  "Body": "Olá, isso foi enviado via WuzAPI!"
 }`},
-            { type: 'received', content: 'Cool! Message was sent successfully.' }
+            { type: 'received', content: 'Legal! A mensagem foi enviada com sucesso.' }
         ],
-'media': [
-        { type: 'sent', content: 'How do I send an image?' },
-        { type: 'typing', content: '' },
-        { type: 'received', content: 'To send an image, use the endpoint /chat/send/image:' },
-        { type: 'code', content: `POST /chat/send/image
+        'media': [
+            { type: 'sent', content: 'Como faço para enviar uma imagem?' },
+            { type: 'typing', content: '' },
+            { type: 'received', content: 'Para enviar uma imagem, use o endpoint /chat/send/image:' },
+            { type: 'code', content: `POST /chat/send/image
 {
-  "Phone": "55912345678",
+  "Phone": "5511999999999",
   "Image": "data:image/jpeg;base64,...",
-  "Caption": "Look at this image!"
+  "Caption": "Veja esta imagem!"
 }`},
-        { type: 'received', content: 'You can also send other media types like audio, documents and videos.' }
-    ],
-    'webhook': [
-        { type: 'sent', content: 'How do I set up webhooks to receive messages?' },
-        { type: 'typing', content: '' },
-        { type: 'received', content: 'You can configure webhooks using the endpoint /webhook:' },
-        { type: 'code', content: `POST /webhook
+            { type: 'received', content: 'Você também pode enviar outros tipos de mídia como áudio, documentos e vídeos.' }
+        ],
+        'webhook': [
+            { type: 'sent', content: 'Como configuro webhooks para receber mensagens?' },
+            { type: 'typing', content: '' },
+            { type: 'received', content: 'Você pode configurar webhooks usando o endpoint /webhook:' },
+            { type: 'code', content: `POST /webhook
 {
-  "webhook": "https://myserver.com/webhook",
+  "webhook": "https://meuserver.com/webhook",
   "events": ["Message", "ReadReceipt"]
 }`},
-        { type: 'received', content: 'This will configure your server to receive notifications for new messages and read receipts.' }
-    ]
+            { type: 'received', content: 'Isso configurará seu servidor para receber notificações de novas mensagens e confirmações de leitura.' }
+        ]
     };
     
     if (demoButtons.length > 0 && chatBody) {

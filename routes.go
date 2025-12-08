@@ -159,5 +159,18 @@ func (s *server) routes() {
 
 	s.router.Handle("/newsletter/list", c.Then(s.ListNewsletter())).Methods("GET")
 
-	s.router.PathPrefix("/").Handler(http.FileServer(http.Dir(exPath + "/static/")))
+	s.router.Handle("/chatwoot/webhook", c.Then(s.ChatwootWebhook())).Methods("POST")
+
+// Rotas de integração Chatwoot
+s.router.Handle("/chatwoot/config", c.Then(s.ChatwootConfigPost())).Methods("POST")
+s.router.Handle("/chatwoot/config", c.Then(s.ChatwootConfigGet())).Methods("GET")
+s.router.Handle("/chatwoot/config", c.Then(s.ChatwootConfigDelete())).Methods("DELETE")
+s.router.Handle("/chatwoot/status", c.Then(s.ChatwootStatusGet())).Methods("GET")
+s.router.Handle("/chatwoot/test", c.Then(s.ChatwootTestPost())).Methods("POST")
+s.router.Handle("/chatwoot/create-inbox", c.Then(s.ChatwootCreateInboxPost())).Methods("POST")
+s.router.Handle("/chatwoot/update-inbox", c.Then(s.ChatwootUpdateInboxPatch())).Methods("PATCH")
+s.router.Handle("/chatwoot/cleanup", c.Then(s.ChatwootCleanupPost())).Methods("POST")
+s.router.Handle("/chatwoot/webhook/{token}", s.ChatwootWebhookTokenPost()).Methods("POST")
+
+s.router.PathPrefix("/").Handler(http.FileServer(http.Dir(exPath + "/static/")))
 }

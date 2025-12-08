@@ -1,42 +1,31 @@
-dbdata/
-files/
+# Binários
 wuzapi
-.env
-.tool-versions
+*.exe
+*.dll
 
-# Added by Claude Task Master
 # Logs
-logs
+logs/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-dev-debug.log
-# Dependency directories
-node_modules/
-# Environment variables
-# Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-# OS specific
+
+# Ambiente
+.env
+
+# Docker volumes
+postgres_data/
+rabbitmq_data/
+n8n_data/
+portainer_data/
+
+# IDE
+.vscode/
+.idea/
+
+# Sistema
 .DS_Store
+Thumbs.db
 
-# Task files
-tasks.json
-tasks/ 
-scripts/
-.roo/
-.cursor/
-.roomodes
-.taskmasterconfig
-.windsurfrules
-NEW_FEATS.md
-
-*.code-workspace
-**/*.code-workspace
-.vscode/workspaceStorage/
+# Outros
+nginx/
+static/docs/
+exemple.json
+n8n-wuzapi-chatwoot-workflow.json

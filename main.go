@@ -274,6 +274,7 @@ func main() {
 	if *adminToken == "" {
 		if v := os.Getenv("WUZAPI_ADMIN_TOKEN"); v != "" {
 			*adminToken = v
+			log.Info().Str("admin_token", *adminToken).Msg("Admin token loaded from environment variable")
 		} else {
 			// Generate a random token if none provided
 			const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
