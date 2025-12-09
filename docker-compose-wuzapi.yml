@@ -1,9 +1,10 @@
 services:
   wuzapi-server:
-    image: asternic/wuzapi:latest
-    # REMOVIDO: A seção "ports" foi removida para que o EasyPanel gerencie a porta.
-    # ports:
-    #   - "8080:8080"
+    # IMPORTANTE: Usando a seção "build" para construir a partir do seu código.
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # A seção "ports" continua removida para o EasyPanel gerenciar.
     environment:
       WUZAPI_PORT: '8080'
       WUZAPI_ADMIN_TOKEN: 'AdminToken_f3e2d1c0b9a8f7e6d5c4b3a2e1d0f9e8'
@@ -35,11 +36,6 @@ services:
       RABBITMQ_DEFAULT_USER: wuzapi
       RABBITMQ_DEFAULT_PASS: wuzapi
       RABBITMQ_DEFAULT_VHOST: /
-    # REMOVIDO: As portas do RabbitMQ não precisam ser expostas para fora.
-    # A comunicação com o wuzapi-server é feita pela rede interna "wuzapi-network".
-    # ports:
-    #   - "5672:5672"
-    #   - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
