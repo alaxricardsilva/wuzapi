@@ -10,7 +10,7 @@ services:
       WUZAPI_ADMIN_TOKEN: 'AdminToken_f3e2d1c0b9a8f7e6d5c4b3a2e1d0f9e8'
       WUZAPI_GLOBAL_ENCRYPTION_KEY: 'R2h5Jk8mN4pS6rT9uWvYx3zB6cE9gHkM'
       WUZAPI_GLOBAL_HMAC_KEY: 'HmacKey_c1b0a9f8e7d6c5b4a3e2d1c0b9a8f7e6d5c4b3a2'
-      WUZAPI_GLOBAL_WEBHOOK: 'https://webhook.site/9210049e-7439-4cfc-a21f-4520977ac4d2'
+      WUZAPI_GLOBAL_WEBHOOK: 'https://n8n.cdnproxy.top/webhook/chatwoot'
       WEBHOOK_FORMAT: 'json'
       SESSION_DEVICE_NAME: 'WuzAPI'
       TZ: 'America/Sao_Paulo'
